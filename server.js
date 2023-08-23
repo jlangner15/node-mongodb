@@ -37,15 +37,15 @@ async function connectToDatabase() {
 
 
 // create routes
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     console.log('Hello!')
-    let x = connectToDatabase();
-    if (x != null)
+    const db = await connectToDatabase();
+    if (db === undefined)
     {
-    res.send('Hello World!')
+    res.send('Connected to DB!')
     }
     else {
-        res.send('Boo!')
+        res.send('Could not connect to DB!')
     }
 });
 
