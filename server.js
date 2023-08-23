@@ -9,36 +9,44 @@ const app = express();
 
 const MongoDBClient = mongodb.MongoClient
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3003;
 
 // connect to DB
 let cachedClient = null;
 let cachedDB = null;
 
 // TODO fix database connection
-// async function connectToDatabase() {
-//     if (cachedDB) return cachedDB;
+async function connectToDatabase() {
+    if (cachedDB) return cachedDB;
 
-//     const client = await MongoDBClient.connect(process.env.DATABASE_URL, {
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true,
-//         tlsCAFile: ".TODO GET DB CERTIFICATE"
-//     });
+    const client = await MongoDBClient.connect(
+        process.env.DATABASE_URL
+        , {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
 
-//     const db = client.db('users');
+    const db = client.db('admin');
 
-//     cachedClient = client;
-//     cachedDB = db;
+    cachedClient = client;
+    cachedDB = db;
 
-//     return db
+    return db
 
-// }
+}
 
 
 // create routes
 app.get('/', (req, res) => {
     console.log('Hello!')
+    let x = connectToDatabase();
+    if (x != null)
+    {
     res.send('Hello World!')
+    }
+    else {
+        res.send('Boo!')
+    }
 });
 
 // create
