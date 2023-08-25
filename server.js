@@ -13,7 +13,7 @@ const app = express();
 
 const MongoDBClient = mongodb.MongoClient
 
-const port = process.env.PORT || 3010;
+const port = process.env.PORT || 3000;
 
 // connect to DB
 let cachedClient = null;
@@ -21,7 +21,8 @@ let cachedDB = null;
 
 // TODO fix database connection
 async function connectToDatabase() {
-    if (cachedDB) return cachedDB;
+    if (cachedDB) return cachedClient;
+
     let client, db;
     try {
         client = await MongoDBClient.connect(
@@ -39,14 +40,14 @@ async function connectToDatabase() {
         cachedClient = client;
         cachedDB = db;
 
-
+        return client;
     }
     catch(error) {
         console.log(error);
         console.log('Mongo is not connected');
     }
     finally {
-        return db;
+        return client;
     }
 }
 
@@ -66,18 +67,57 @@ app.get('/', async (req, res) => {
 });
 
 // create
+// app.get('/new-user', async (req, res) => {
+//     const client = await connectToDatabase();
+//     const db = client.db('admin');
+//     console.log('here in create');
+//     db.collection("testMES").insertOne({
+//         "id": 3,
+//         "username": "TEST3",
+//         "role": "user"
+//     })
 
-// read
-// app.get('/users', async (req, res) => {
-//     const db = await connectToDatabase();
-//     const users = db.collection("users").find({}).toArray();
-
-//     res.json({users})
+//     res.send('success adding');
 // })
 
-// udpate
+
+// read
+app.get('/users', async (req, res) => {
+    const client = await connectToDatabase();
+    const db = client.db('admin');
+
+    result = await db.collection('testMES').find({}).toArray();
+    console.log(result);
+
+    res.send(result)
+})
+
+// update
+
+// app.get('/update-user', async (req, res) => {
+//     const client = await connectToDatabase();
+//     const db = client.db('admin');
+
+//     result = await db.collection('testMES').updateOne(
+//         {"id": 2}, {$set: {
+//         username: 'JJL15'
+//         }});
+//     console.log(result);
+
+//     res.send('success')
+// })
 
 // delete
+// app.get('/delete-user', async (req, res) => {
+//     const client = await connectToDatabase();
+//     const db = client.db('admin');
+
+//     result = await db.collection('testMES').deleteMany(
+//         {"id": 3});
+//     console.log(result);
+
+//     res.send('success delete')
+// })
 
 
 //create server
