@@ -4,12 +4,16 @@ require('dotenv').config();
 const express = require('express');
 const mongodb = require('mongodb');
 
+const mongoose = require('mongoose');
+
+
+
 // configure app
 const app = express();
 
 const MongoDBClient = mongodb.MongoClient
 
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3010;
 
 // connect to DB
 let cachedClient = null;
@@ -18,34 +22,46 @@ let cachedDB = null;
 // TODO fix database connection
 async function connectToDatabase() {
     if (cachedDB) return cachedDB;
+    let client, db;
+    try {
+        client = await MongoDBClient.connect(
+            process.env.DATABASE_URL
+            , {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            tls: true
+        })
 
-    const client = await MongoDBClient.connect(
-        process.env.DATABASE_URL
-        , {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+        console.log('Mongo is connected');
 
-    const db = client.db('admin');
+        db = client.db('admin');
 
-    cachedClient = client;
-    cachedDB = db;
+        cachedClient = client;
+        cachedDB = db;
 
-    return db
 
+    }
+    catch(error) {
+        console.log(error);
+        console.log('Mongo is not connected');
+    }
+    finally {
+        return db;
+    }
 }
 
 
 // create routes
 app.get('/', async (req, res) => {
-    console.log('Hello!')
+
     const db = await connectToDatabase();
+
     if (db === undefined)
     {
-    res.send('Connected to DB!')
+        res.send('Could not connect to DB!')
     }
     else {
-        res.send('Could not connect to DB!')
+        res.send('Connected to DB!')
     }
 });
 
