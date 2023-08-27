@@ -5,8 +5,10 @@ const express = require('express');
 const mongodb = require('mongodb');
 
 const mongoose = require('mongoose');
-
-
+const userRouter = require('./routes/userRoutes');
+//////
+//https://www.freecodecamp.org/news/rest-api-design-best-practices-build-a-rest-api/
+//////
 
 // configure app
 const app = express();
@@ -55,8 +57,8 @@ async function connectToDatabase() {
 // create routes
 app.get('/', async (req, res) => {
 
-    const db = await connectToDatabase();
-
+    //const db = await connectToDatabase();
+    const db = undefined;
     if (db === undefined)
     {
         res.send('Could not connect to DB!')
@@ -118,7 +120,9 @@ app.get('/users', async (req, res) => {
 
 //     res.send('success delete')
 // })
+///////////////////////////////////
 
+app.use('/api/users', userRouter)
 
 //create server
 app.listen(port, () =>{
