@@ -57,8 +57,8 @@ async function connectToDatabase() {
 // create routes
 app.get('/', async (req, res) => {
 
-    //const db = await connectToDatabase();
-    const db = undefined;
+    const db = await connectToDatabase();
+    //const db = undefined;
     if (db === undefined)
     {
         res.send('Could not connect to DB!')
